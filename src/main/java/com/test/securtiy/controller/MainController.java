@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class MainController {
 
-    @GetMapping(value = "/manage/good")
+    @GetMapping(value = "/manager/good")
     public @ResponseBody String good(){
         return "Good World";
     }
@@ -17,5 +17,10 @@ public class MainController {
     @GetMapping(value = "/hello")
     public String hello(){
         return "hello";
+    }
+
+    @GetMapping(value = "/world")
+    public @ResponseBody String world(){
+        return "World";
     }
 }

@@ -13,7 +13,7 @@ public class SecurityConfig {
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic(Customizer.withDefaults())
-                .antMatcher("/manage/**")
+                .antMatcher("/manager/**")
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().hasRole("ADMIN")) //권한 체크
                 .csrf().disable();
         return http.build();
@@ -23,7 +23,8 @@ public class SecurityConfig {
     public SecurityFilterChain formLoginFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()) //인증 요청
+                        .antMatchers("/hello").authenticated() //인증 요청
+                        .anyRequest().permitAll())  //나머지 요청은 허락
                 .formLogin(Customizer.withDefaults());
         return http.build();
     }
