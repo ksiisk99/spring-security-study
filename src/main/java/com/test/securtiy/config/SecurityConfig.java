@@ -24,12 +24,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain formLoginFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and().csrf().disable()
-                .httpBasic(Customizer.withDefaults())
+                .cors().and().httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                        .antMatchers("/hello").authenticated() //인증 요청
+                        .antMatchers("/").authenticated() //인증 요청
                         .anyRequest().permitAll())  //나머지 요청은 허락
-                .formLogin(page -> page.loginPage("/login")); //커스텀 로그인 페이지
+                .formLogin(page -> page.loginPage("/loginForm") //커스텀 로그인 페이지
+                        .loginProcessingUrl("/login") //login주소가 호출이 되면 시큐리티가 대신 로그인
+                        .defaultSuccessUrl("/"));
+                //usernameParameter or passwordParameter로 변수명 변경할 수 있음
         return http.build();
     }
 

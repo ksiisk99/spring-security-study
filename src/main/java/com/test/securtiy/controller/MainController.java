@@ -22,8 +22,8 @@ public class MainController {
     }
 
 
-    @GetMapping("/login")
-    public String login(){
+    @GetMapping("/loginForm")
+    public String loginForm(){
         return "loginForm";
     }
 
@@ -41,7 +41,11 @@ public class MainController {
         System.out.println(encPassword);
         user.setPassword(encPassword);
         userRepository.save(user);
-        return "redirect:/login";
+        return "redirect:/loginForm";
     }
 
+    @GetMapping("/")
+    public @ResponseBody String root(){
+        return "success";
+    }
 }
