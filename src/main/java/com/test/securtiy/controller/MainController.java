@@ -34,15 +34,15 @@ public class MainController {
     }
     @PostMapping("/join")
     public String join(User user){
-        System.out.println(user);
         user.setRole("Customer");
         String rawPassword=user.getPassword();
         String encPassword=bCryptPasswordEncoder.encode(rawPassword);
-        System.out.println(encPassword);
+        System.out.println("PASSWORD: "+encPassword);
         user.setPassword(encPassword);
         userRepository.save(user);
         return "redirect:/loginForm";
     }
+
 
     @GetMapping("/")
     public @ResponseBody String root(){

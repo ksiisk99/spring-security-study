@@ -19,5 +19,7 @@ public class User extends BaseEntity{
     private String username;
     private String password;
     private String role; //권한
+    private String provider; //oauth도메인
+    private String providerId //sub아이디
 
 }
