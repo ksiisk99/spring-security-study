@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 //exclude={DataSourceAutoConfiguration.class}
 @EnableJpaAuditing //BaseEntity 실행
@@ -16,4 +18,8 @@ public class SecurtiyApplication {
 		SpringApplication.run(SecurtiyApplication.class, args);
 	}
 
+	@Bean
+	public BCryptPasswordEncoder encodePwd(){
+		return new BCryptPasswordEncoder();
+	}
 }

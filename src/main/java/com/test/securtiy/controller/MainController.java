@@ -54,7 +54,7 @@ public class MainController {
             Authentication authentication, @AuthenticationPrincipal PrincipalDetails userDetails){
         //@AuthenticationPrincipal은 세션 정보를 확인할 수 있음
         System.out.println("=========/test/login =========");
-        PrincipalDetails principalDetails= (PrincipalDetails) authentication.getDetails();
+        PrincipalDetails principalDetails= (PrincipalDetails) authentication.getPrincipal();
         System.out.println("authentication: "+principalDetails.getUser());
 
         System.out.println("userDetails: "+userDetails.getUser());
@@ -65,7 +65,7 @@ public class MainController {
     public @ResponseBody String testOauthLogin(
             Authentication authentication, @AuthenticationPrincipal PrincipalDetails userDetails){
         System.out.println("=========/test/login =========");
-        OAuth2User oAuth2User= (OAuth2User) authentication.getDetails();
+        OAuth2User oAuth2User= (OAuth2User) authentication.getPrincipal();
         System.out.println("authentication: "+oAuth2User.getAttributes());
 
         System.out.println("oauth2User: "+userDetails.getAttributes());
@@ -74,5 +74,13 @@ public class MainController {
     @GetMapping("/")
     public @ResponseBody String root(){
         return "success";
+    }
+
+    //oAuth 로그인해도 PrincipalDetails
+    //일반로그인해도 PrincipalDetails
+    @GetMapping("/user")
+    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        System.out.println("PrincipalDetails: "+principalDetails.getUser());
+        return "user";
     }
 }

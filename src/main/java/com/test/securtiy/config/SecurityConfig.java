@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     @Autowired
-    PrincipalOauth2UserService principalOauth2UserService;
+    private PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
@@ -44,8 +44,5 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public BCryptPasswordEncoder encodePwd(){
-        return new BCryptPasswordEncoder();
-    }
+
 }

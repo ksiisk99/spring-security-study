@@ -17,21 +17,27 @@ import java.util.Collection;
 import java.util.Map;
 
 //Security Sessions => Authentication => UserDetails(PrincipalDetails)
-@AllArgsConstructor
-@Data
-public class PrincipalDetails implements UserDetails, OAuth2User {
 
+@Data
+@AllArgsConstructor
+public class PrincipalDetails implements UserDetails, OAuth2User {
     private User user;
+    private Map<String,Object> attributes;
+//oauth로그인
+
+//일반로그인
+    public PrincipalDetails(User user) {
+        this.user = user;
+    }
 
     @Override
     public Map<String, Object> getAttributes() {
-        return null;
+        return attributes;
     }
     @Override
     public String getName() {
         return null;
     }
-
 
 
     //유저의 권한을 리턴
