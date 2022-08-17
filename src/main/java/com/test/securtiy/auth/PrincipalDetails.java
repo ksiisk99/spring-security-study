@@ -7,17 +7,32 @@ package com.test.securtiy.auth;
 
 import com.test.securtiy.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 //Security Sessions => Authentication => UserDetails(PrincipalDetails)
 @AllArgsConstructor
-public class PrincipalDetails implements UserDetails {
+@Data
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private User user;
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return null;
+    }
+    @Override
+    public String getName() {
+        return null;
+    }
+
+
 
     //유저의 권한을 리턴
     @Override
@@ -62,4 +77,6 @@ public class PrincipalDetails implements UserDetails {
         //현재시간 - 로그인시간 => 지정된 시간을 초과하면 return false
         return true;
     }
+
+
 }

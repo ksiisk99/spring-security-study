@@ -14,6 +14,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         System.out.println("getClientRegistration: "+userRequest.getClientRegistration());
         System.out.println("getAccessToken: "+userRequest.getAccessToken());
+
+        //구글로그인 -> code를 리턴(OAuth-Client라이브러리가 받음) -> AccessToken요청 -> userRequest 정보를 줌 -> loadUser함수 -> 회원프로필을 받아줌
         System.out.println("getAttributes: "+super.loadUser(userRequest).getAttributes());
         //username=sub아이디 , password = 암호화된 비번 , email = email 으로 회원가입 시킴
         return super.loadUser(userRequest);
