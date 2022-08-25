@@ -6,8 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Optional;
 
 //exclude={DataSourceAutoConfiguration.class}
 @EnableJpaAuditing //BaseEntity 실행
@@ -21,5 +26,16 @@ public class SecurtiyApplication {
 	@Bean
 	public BCryptPasswordEncoder encodePwd(){
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public AuditorAware<String> auditorProvider(){
+		return new AuditorAware<String>() {
+			@Override
+			public Optional<String> getCurrentAuditor() {
+				return Optional.of(new SimpleDateFormat("yy-MM-dd")
+						.format(new Date()));
+			}
+		};
 	}
 }
