@@ -44,8 +44,6 @@
 //                    .username(username)
 //                    .password(password)
 //                    .role(role)
-//                    .provider(provider)
-//                    .providerId(providerId)
 //                    .build();
 //            userRepository.save(userEntity);
 //        }

@@ -1,5 +1,6 @@
 package com.test.securtiy.filter;
 
+import com.test.securtiy.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -16,11 +17,16 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final AuthenticationManager authenticationManager;
-
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        String token=request.getHeader("token");
+        boolean valid= jwtTokenProvider.validateToken(token);
+        if(!valid){ //만료
+            System.out.println("만료되었습니다");
+            response.sendError(HttpServletResponse.SC_GONE);
+        }
+        filterChain.doFilter(request,response);
     }
 }
