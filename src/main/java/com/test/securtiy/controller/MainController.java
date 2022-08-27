@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 public class MainController {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
     @GetMapping(value = "/manager/good")
     public @ResponseBody String good(){
         return "Good World";
@@ -48,11 +49,11 @@ public class MainController {
         return "redirect:/loginForm";
     }
 
-    @PostMapping("/get/jwt")
-    public String jwt(HttpServletResponse response){
-        JwtTokenProvider jwtTokenProvider=new JwtTokenProvider();
+    @GetMapping("/get/jwt")
+    public @ResponseBody String jwt(HttpServletResponse response){
+
         String token=jwtTokenProvider.createToken("ABC","ADMIN");
-        System.out.println(token);
+        System.out.println("TOKEN: "+token);
         response.addHeader("token",token);
         return token;
     }

@@ -14,12 +14,21 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.annotation.PostConstruct;
+
 @EnableWebSecurity
 public class JwtConfig {
     @Autowired
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
     JwtTokenProvider jwtTokenProvider;
+
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @PostConstruct
+    public void init(){
+        jwtAuthenticationFilter=new JwtAuthenticationFilter(jwtTokenProvider);
+        //jwtAuthenticationFilter.setFilterProcessesUrl();
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -28,17 +37,22 @@ public class JwtConfig {
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .formLogin().disable()
-                .httpBasic().disable() //
-                .authorizeRequests(authorize -> authorize
-                        .antMatchers("/jwt/user").access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER')")
-                        .antMatchers("/jwt/manager").access("hasRole('ROLE_MANAGER')")
-                        .anyRequest().permitAll()
-                )
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .httpBasic().disable()
+                .authorizeHttpRequests().anyRequest().permitAll()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
-                    ,UsernamePasswordAuthenticationFilter.class);
+                    ,UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint);
+//                .authorizeRequests(authorize -> authorize
+//                        .antMatchers("/jwt/user").access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER')")
+//                        .antMatchers("/jwt/manager").access("hasRole('ROLE_MANAGER')")
+//                        .anyRequest().permitAll()
+//                        .and()
+//                        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
+//                                ,UsernamePasswordAuthenticationFilter.class)
+//                )
+
         return http.build();
 
     }

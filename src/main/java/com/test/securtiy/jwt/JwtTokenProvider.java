@@ -1,11 +1,9 @@
 package com.test.securtiy.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.config.annotation.rsocket.RSocketSecurity;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +22,7 @@ public class JwtTokenProvider {
     @PostConstruct
     public void init(){
         byte[] keyBytes= Decoders.BASE64.decode(secretKey);
-        this.key=Keys.hmacShaKeyFor(keyBytes);
+        key=Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String createToken(String id, String authority) {
@@ -39,6 +37,7 @@ public class JwtTokenProvider {
                 .compact();
     }
     public boolean validateToken(String token){
+
         try {
             return !Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -63,4 +62,6 @@ public class JwtTokenProvider {
                     .get("authority",String.class);
         }return null;
     }
+
+
 }
