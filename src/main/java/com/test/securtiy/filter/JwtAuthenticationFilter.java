@@ -29,14 +29,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println("=====JWTFILTER=====");
-        if(!request.getServletPath().matches("/get/.*")) {
-            String token = request.getHeader("token");
-            boolean valid = jwtTokenProvider.validateToken(token);
-            if (!valid) { //만료
-                System.out.println("만료되었습니다");
-                response.sendError(HttpServletResponse.SC_GONE);
-            }
+        String token = request.getHeader("token");
+        boolean valid = jwtTokenProvider.validateToken(token);
+        if (!valid) { //만료
+            System.out.println("만료 또는 NULL");
+            request.setAttribute("exception","NULL or EXPIRED");
         }
+
         filterChain.doFilter(request,response);
     }
 }

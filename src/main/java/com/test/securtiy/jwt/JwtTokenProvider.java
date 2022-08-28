@@ -5,6 +5,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.config.annotation.rsocket.RSocketSecurity;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -48,7 +49,10 @@ public class JwtTokenProvider {
                     .before(new Date());
         }catch(JwtException e){
             System.out.println("유효하지 않은 토큰");
-            throw new JwtException("유효하지 않은 토큰");
+            return false;
+        }catch(IllegalArgumentException e){
+            System.out.println("NULL 토큰");
+            return false;
         }
     }
 

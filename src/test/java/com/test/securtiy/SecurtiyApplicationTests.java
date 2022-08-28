@@ -13,17 +13,27 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 class SecurtiyApplicationTests {
-	@Autowired
-	UserRepository userRepository;
-	@Autowired
-	JwtTokenProvider jwtTokenProvider;
+//	@Autowired
+//	UserRepository userRepository;
+//	@Autowired
+//	JwtTokenProvider jwtTokenProvider;
 	@Test
 	void jwtTest() {
-		String pattern="/get/.*";
-		Assertions.assertTrue("/get/".matches(pattern));
+		List<Integer>list=new ArrayList<>();
+		System.out.println(list.get(0));
+//		try{
+//			List<Integer>list=new ArrayList<>();
+//			System.out.println(list.get(0));
+//		}catch (Exception e){
+//			e.printStackTrace();
+//		}
+
+		System.out.println("clear");
 	}
 
 }

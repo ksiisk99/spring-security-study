@@ -6,7 +6,9 @@ import com.test.securtiy.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -27,7 +29,6 @@ public class JwtConfig {
     @PostConstruct
     public void init(){
         jwtAuthenticationFilter=new JwtAuthenticationFilter(jwtTokenProvider);
-        //jwtAuthenticationFilter.setFilterProcessesUrl();
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -38,24 +39,27 @@ public class JwtConfig {
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
-                .authorizeHttpRequests().anyRequest().permitAll()
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
-                    ,UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests(authorize -> authorize
+                        .antMatchers("/jwt/user").access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER')")
+                        .antMatchers("/jwt/manager").access("hasRole('ROLE_MANAGER')")
+                        .antMatchers("/jwt/**").authenticated()
+                        .anyRequest().permitAll()
+                        .and()
+                        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
+                                ,UsernamePasswordAuthenticationFilter.class)
+                )
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
-//                .authorizeRequests(authorize -> authorize
-//                        .antMatchers("/jwt/user").access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER')")
-//                        .antMatchers("/jwt/manager").access("hasRole('ROLE_MANAGER')")
-//                        .anyRequest().permitAll()
-//                        .and()
-//                        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
-//                                ,UsernamePasswordAuthenticationFilter.class)
-//                )
-
         return http.build();
-
     }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return (web) -> web
+                .ignoring()
+                .antMatchers("/get/**");
+    }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource(){

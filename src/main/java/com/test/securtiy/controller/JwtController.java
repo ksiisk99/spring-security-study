@@ -12,4 +12,5 @@ public class JwtController {
     public String home(){
         return "<h1>home</h1>";
     }
+
 }

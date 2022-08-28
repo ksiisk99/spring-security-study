@@ -58,6 +58,12 @@ public class MainController {
         return token;
     }
 
+    @GetMapping("/get/root")
+    public @ResponseBody String root(){
+        return "ROOT";
+    }
+
+
 //    @GetMapping("/test/login")
 //    public @ResponseBody String testLogin(
 //            Authentication authentication, @AuthenticationPrincipal PrincipalDetails userDetails){
