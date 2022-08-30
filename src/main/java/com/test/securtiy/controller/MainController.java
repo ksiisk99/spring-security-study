@@ -1,10 +1,11 @@
 package com.test.securtiy.controller;
 
-import com.test.securtiy.auth.PrincipalDetails;
 import com.test.securtiy.entity.User;
+import com.test.securtiy.filter.AuthorityFilter;
 import com.test.securtiy.jwt.JwtTokenProvider;
 import com.test.securtiy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,12 +17,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class MainController {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthorityFilter authorityFilter;
+
     @GetMapping(value = "/manager/good")
     public @ResponseBody String good(){
         return "Good World";
@@ -50,17 +53,28 @@ public class MainController {
     }
 
     @GetMapping("/get/jwt")
-    public @ResponseBody String jwt(HttpServletResponse response){
-
-        String token=jwtTokenProvider.createToken("ABC","ADMIN");
+    public @ResponseBody String jwt(
+            HttpServletResponse response
+    ,@RequestHeader(name = "token")String tk){
+        System.out.println("HEADER TOKEN: "+tk);
+        String token=jwtTokenProvider.createToken("ABC","ADMI");
         System.out.println("TOKEN: "+token);
         response.addHeader("token",token);
         return token;
     }
-
     @GetMapping("/get/root")
     public @ResponseBody String root(){
         return "ROOT";
+    }
+
+    //@AuthorityFilter.isAuthorize(#token)
+    @GetMapping("/get/authorize")
+    @PreAuthorize("@authorityFilter.isAuthorize(#token)")
+    public @ResponseBody String authorize(
+            @RequestHeader(name = "token")String token
+    ){
+        System.out.println("authorize good");
+        return "good";
     }
 
 

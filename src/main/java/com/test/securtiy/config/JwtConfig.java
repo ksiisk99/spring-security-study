@@ -5,6 +5,13 @@ import com.test.securtiy.jwt.JwtAuthenticationEntryPoint;
 import com.test.securtiy.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,8 +25,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.annotation.PostConstruct;
 
-@EnableWebSecurity
-public class JwtConfig {
+//@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class JwtConfig{
     @Autowired
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
@@ -30,34 +38,34 @@ public class JwtConfig {
     public void init(){
         jwtAuthenticationFilter=new JwtAuthenticationFilter(jwtTokenProvider);
     }
+
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .httpBasic().disable()
+                .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //세션을 사용하지 않음 JSESSION X
                 .and()
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .formLogin().disable()
-                .httpBasic().disable()
-                .authorizeRequests(authorize -> authorize
-                        .antMatchers("/jwt/user").access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER')")
-                        .antMatchers("/jwt/manager").access("hasRole('ROLE_MANAGER')")
-                        .antMatchers("/jwt/**").authenticated()
-                        .anyRequest().permitAll()
-                        .and()
-                        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
-                                ,UsernamePasswordAuthenticationFilter.class)
-                )
+                .authorizeHttpRequests().anyRequest().permitAll()
+                .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
+                        ,UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return (web) -> web
-                .ignoring()
-                .antMatchers("/get/**");
+                .ignoring()//"/get/authorize"
+                .antMatchers("/get/jwt","/get/root");
     }
 
 

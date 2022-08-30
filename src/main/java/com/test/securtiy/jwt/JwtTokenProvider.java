@@ -57,14 +57,23 @@ public class JwtTokenProvider {
     }
 
     public String getAuthority(String token){
-        if(validateToken(token)){
+        try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody()
-                    .get("authority",String.class);
-        }return null;
+                    .get("authority", String.class);
+        }catch(JwtException e){
+            System.out.println("유효하지 않은 토큰");
+            return null;
+        }catch(IllegalArgumentException e){
+            System.out.println("NULL 토큰");
+            return null;
+        }
+//        if(validateToken(token)){
+//
+//        }return "USER";
     }
 
 
