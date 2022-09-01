@@ -1,6 +1,7 @@
 package com.test.securtiy.config;
 
 import com.test.securtiy.filter.JwtAuthenticationFilter;
+import com.test.securtiy.jwt.JwtAccessDeniedHandler;
 import com.test.securtiy.jwt.JwtAuthenticationEntryPoint;
 import com.test.securtiy.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +33,8 @@ public class JwtConfig{
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
     JwtTokenProvider jwtTokenProvider;
-
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @PostConstruct
-    public void init(){
-        jwtAuthenticationFilter=new JwtAuthenticationFilter(jwtTokenProvider);
-    }
-
+    @Autowired
+    JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -50,13 +46,30 @@ public class JwtConfig{
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .formLogin().disable()
-                .authorizeHttpRequests().anyRequest().permitAll()
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .authorizeHttpRequests()
+                .antMatchers("/get/authorize").permitAll()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
-                        ,UsernamePasswordAuthenticationFilter.class);
+                    ,UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint);
+//                .authorizeHttpRequests((authorize) -> {
+//                            try {
+//                                authorize
+//                                        .antMatchers("/get/authorize").permitAll()
+//                                        .and()
+//                                        .exceptionHandling()
+//                                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                                        .accessDeniedHandler(jwtAccessDeniedHandler);
+//                            } catch (Exception e) {
+//                                throw new RuntimeException(e);
+//                            }
+//                        }
+//                );
+
+//                .and()
+//                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
+//                        ,UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -65,7 +78,7 @@ public class JwtConfig{
     public WebSecurityCustomizer webSecurityCustomizer(){
         return (web) -> web
                 .ignoring()//"/get/authorize"
-                .antMatchers("/get/jwt","/get/root");
+                .antMatchers("/get/jwt");
     }
 
 

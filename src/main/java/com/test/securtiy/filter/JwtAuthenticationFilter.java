@@ -20,19 +20,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.print("=====JWTFILTER=====");
+        System.out.println("=====JWTFILTER=====");
         String token = request.getHeader("token");
-        System.out.println(token);
         boolean valid = jwtTokenProvider.validateToken(token);
         if (!valid) { //만료
-            System.out.println("만료 또는 NULL");
             request.setAttribute("exception","NULL or EXPIRED");
         }
 

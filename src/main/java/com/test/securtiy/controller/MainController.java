@@ -55,10 +55,9 @@ public class MainController {
     @GetMapping("/get/jwt")
     public @ResponseBody String jwt(
             HttpServletResponse response
-    ,@RequestHeader(name = "token")String tk){
-        System.out.println("HEADER TOKEN: "+tk);
-        String token=jwtTokenProvider.createToken("ABC","ADMI");
-        System.out.println("TOKEN: "+token);
+    ){
+        String token=jwtTokenProvider.createToken("ABC","ADMIN");
+        System.out.println("CREATE_TOKEN: "+token);
         response.addHeader("token",token);
         return token;
     }
@@ -69,9 +68,10 @@ public class MainController {
 
     //@AuthorityFilter.isAuthorize(#token)
     @GetMapping("/get/authorize")
-    @PreAuthorize("@authorityFilter.isAuthorize(#token)")
+    @PreAuthorize("@authorityFilter.isAuthorize(#token,#response)")
     public @ResponseBody String authorize(
             @RequestHeader(name = "token")String token
+            ,HttpServletResponse response
     ){
         System.out.println("authorize good");
         return "good";

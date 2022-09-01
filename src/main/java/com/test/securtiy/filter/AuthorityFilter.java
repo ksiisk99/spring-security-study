@@ -5,16 +5,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
 public class AuthorityFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
-    public boolean isAuthorize(String token){
-        System.out.println("AUTHORIZE FILTER");
+    public boolean isAuthorize(String token, HttpServletResponse response) throws IOException {
+        System.out.println("===AUTHORIZE FILTER===");
         String authority=jwtTokenProvider.getAuthority(token);
-        System.out.println(authority);
 
         if(authority!=null && authority.equals("ADMIN")){
             return true;
