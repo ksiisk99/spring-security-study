@@ -13,13 +13,17 @@ import java.io.IOException;
 public class AuthorityFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
-    public boolean isAuthorize(String token, HttpServletResponse response) throws IOException {
+    public boolean isAuthorize(String token
+            , HttpServletResponse response
+            , HttpServletRequest request) throws IOException {
         System.out.println("===AUTHORIZE FILTER===");
         String authority=jwtTokenProvider.getAuthority(token);
 
         if(authority!=null && authority.equals("ADMIN")){
+
             return true;
         }
+        request.setAttribute("exception","AuthorizeError");
         return false;
     }
 

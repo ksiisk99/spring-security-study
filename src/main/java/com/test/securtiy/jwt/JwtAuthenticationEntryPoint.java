@@ -16,9 +16,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String exception=(String)request.getAttribute("exception");
         System.out.println("EXCEPTION?: "+exception);
-//        if(exception!=null){
-//            System.out.println("NO AUTHENTICATION");
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-//        }
+        if(exception!=null){
+            if(exception.equals("AuthorizeError")){
+                //권한 리다이렉트
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            }else{
+                //인증 리다이렉트 이미 JwtAUthenticationFilter에서 처리해서 효과는 없을거임
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+        }
     }
 }

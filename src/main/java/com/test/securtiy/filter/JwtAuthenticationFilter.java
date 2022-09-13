@@ -30,7 +30,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader("token");
         boolean valid = jwtTokenProvider.validateToken(token);
         if (!valid) { //만료
-            request.setAttribute("exception","NULL or EXPIRED");
+            //request.setAttribute("exception","NULL or EXPIRED");
+            //인증 리다이렉트
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         filterChain.doFilter(request,response);

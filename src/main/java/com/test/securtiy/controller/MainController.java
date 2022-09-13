@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -56,7 +57,7 @@ public class MainController {
     public @ResponseBody String jwt(
             HttpServletResponse response
     ){
-        String token=jwtTokenProvider.createToken("ABC","ADMIN");
+        String token=jwtTokenProvider.createToken("ABC","ADMI");
         System.out.println("CREATE_TOKEN: "+token);
         response.addHeader("token",token);
         return token;
@@ -68,11 +69,12 @@ public class MainController {
 
     //@AuthorityFilter.isAuthorize(#token)
     @GetMapping("/get/authorize")
-    @PreAuthorize("@authorityFilter.isAuthorize(#token,#response)")
+    @PreAuthorize("@authorityFilter.isAuthorize(#token,#response,#request)")
     public @ResponseBody String authorize(
             @RequestHeader(name = "token")String token
-            ,HttpServletResponse response
-    ){
+            , HttpServletResponse response
+            , HttpServletRequest request
+            ){
         System.out.println("authorize good");
         return "good";
     }
